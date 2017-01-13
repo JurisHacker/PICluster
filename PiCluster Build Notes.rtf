@@ -1,99 +1,94 @@
-{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf470
-{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 HelveticaNeue;}
-{\colortbl;\red255\green255\blue255;\red49\green49\blue49;}
-\margl1440\margr1440\vieww15060\viewh13240\viewkind0
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+## Goofy Raspberry PI cluster stuff
+## Uses a gl-inet router, 4 PIs, a TP-Link switch (all can be powered over usb) and an Anker 6 port USB power block
+## I use a GeauxRobot 5 layer dogbone PI case (4 PIs + the switch)
+## I use a TE100-55/a switch.  When it is pulled out of its case, it fits nicely in one of the slots in the rack
+## So, my stack is Anker power block (heavy so it is on the bottom for stability)
+## Then 2 PIs
+## Then switch
+## Then 2 PIs
+## Then router mounted to the top (not inside the dogbone case)
+## I made patch cables that are small and tight to manage the cables
+## I also use 1' USB cables to manage cables
+## This give a compact, portable cluster
 
-\f0\fs24 \cf0 ## Goofy Raspberry PI cluster stuff\
-## Uses a gl-inet router, 4 PIs, a TP-Link switch (all can be powered over usb) and an Anker 6 port USB power block\
-\
-## make the raspbian disk images for each PI\
-## on mac (from terminal) do:\
-diskutil list\
-diskutil unmount /dev/disk2s1  ## the disk ID of my SD card\
-sudo dd bs=1m if=2016-11-25-raspbian-jessie-lite.img of=/dev/disk2\
-\
-## I use a gl-inet GL-MT300A device as the router.  It has an SD card slot that can be shared via NFS\
-Vine ## (router name) \
-IP:	192.168.31.40  ## Get it: 3.14\'85\
-\
-PI1\
-IP: 	192.168.31.41\
-\
-Pi2\
+## make the raspbian disk images for each PI
+## on mac (from terminal) do:
+diskutil list
+diskutil unmount /dev/disk2s1  ## the disk ID of my SD card
+sudo dd bs=1m if=2016-11-25-raspbian-jessie-lite.img of=/dev/disk2
+
+## I use a gl-inet GL-MT300A device as the router.  It has an SD card slot that can be shared via NFS
+Vine ## (router name) 
+IP:	192.168.31.40  ## Get it: 3.14...
+
+PI1
+IP: 	192.168.31.41
+
+Pi2
 IP:	192.168.31.42
-\f1\fs26 \cf2 \expnd0\expndtw0\kerning0
-\
 
-\f0\fs24 \cf0 \kerning1\expnd0\expndtw0 \
-PI3\
-IP: 	192.168.31.43\
-\
+PI3
+IP: 	192.168.31.43
+
 PI4\
-IP:	192.168.31.44\
-\
-## On each PI do\
-raspi-config ## to expand the filesystem to the full SD card\
-passwd  ## Change the PI user password\
-useradd  ## Create some new user\
-usermod -aG sudo newuser  ##Add your new user to the sudo group\
-\
-\
-## Edit /etc/hostname on each PI to name it\
-/etc/hostname\
+IP:	192.168.31.44
+
+## On each PI do
+raspi-config ## to expand the filesystem to the full SD card
+passwd  ## Change the PI user password
+useradd  ## Create some new user
+usermod -aG sudo newuser  ##Add your new user to the sudo group
+
+## Edit /etc/hostname on each PI to name it
+/etc/hostname
 \
 ## Edit /etc/hosts adding each PI\'92s IP\
-/etc/hosts\
-\
-192.168.31.40	vine	vine.local	vine.net  ## router name\
-192.168.31.41	PI1	PI1.local	PI1.net\
-192.168.31.42	PI2	PI2.local	PI2.net\
-192.168.31.43	PI3	PI3.local	PI3.net\
-192.168.31.44	PI4	PI4.local	PI4.net\
-\
-## The gl-inet router can also serve as an NTP server, edit /etc/ntp.conf on each PI to use the router\
-/etc/ntp.conf\
-server 192.168.31.40\
-\
-## generate SSH keys and copy to each system\
-ssh-keygen -t rsa \
-\pard\pardeftab720\sl320\partightenfactor0
-\cf0 \
-## copy .pub to .ssh/authorized_keys on each PI\
-cat ~/.ssh/id_rsa.pub | ssh newuser@192.168.31.41 'cat >> .ssh/authorized_keys'\
-\
-\
-## Setup NFS server on head router\
-## edit /etc/exports to include each PI (SD card named \'93MicroSD\'94)\
-/mnt/MicroSD PI1(rw,sync)\
-/mnt/MicroSD PI2(rw,sync)\
-/mnt/MicroSD P3(rw,sync)\
-/mnt/MicroSD PI4(rw,sync)\
-\
-sudo reboot\
-\
-## Setup NFS on PIs\
-sudo apt-get install nfs-common\
-sudo mkdir /mnt/nfs\
-sudo chown -R newuser:newuser /mnt/nfs\
-sudo apt-get install autofs\
-\
-## edit the /etc/auto.master file adding\
-/mnt/nfs /etc/auto.nfs  ## at the end of the file. \
-\
-## create the /etc/auto.nfs file, adding,\
-vine   vine:/mnt/MicroSD\
-\
-## restart the autofs service\
-sudo /etc/init.d/autofs restart.\
-\
-## set rpcbind and nfs-common to start on boot\
-sudo update-rc.d rpcbind enable && sudo update-rc.d nfs-common enable\
-\
-## reboot PIs\
-## after reboot you should be able to \
-cd /mnt/nfs/vine  ## and see your SD card.\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 \
-\
-}
+/etc/hosts
+
+192.168.31.40	vine	vine.local	vine.net  ## router name
+192.168.31.41	PI1	PI1.local	PI1.net
+192.168.31.42	PI2	PI2.local	PI2.net
+192.168.31.43	PI3	PI3.local	PI3.net
+192.168.31.44	PI4	PI4.local	PI4.net
+
+## The gl-inet router can also serve as an NTP server, edit /etc/ntp.conf on each PI to use the router
+/etc/ntp.conf
+server 192.168.31.40
+
+## generate SSH keys and copy to each system
+ssh-keygen -t rsa 
+
+## copy .pub to .ssh/authorized_keys on each PI
+cat ~/.ssh/id_rsa.pub | ssh newuser@192.168.31.41 'cat >> .ssh/authorized_keys'
+
+
+## Setup NFS server on head router
+## edit /etc/exports to include each PI (SD card named MicroSD)
+/mnt/MicroSD PI1(rw,sync)
+/mnt/MicroSD PI2(rw,sync)
+/mnt/MicroSD P3(rw,sync)
+/mnt/MicroSD PI4(rw,sync)
+
+sudo reboot
+
+## Setup NFS on PIs
+sudo apt-get install nfs-common
+sudo mkdir /mnt/nfs
+sudo chown -R newuser:newuser /mnt/nfs
+sudo apt-get install autofs
+
+## edit the /etc/auto.master file adding
+/mnt/nfs /etc/auto.nfs  ## at the end of the file. 
+
+## create the /etc/auto.nfs file, adding,
+vine   vine:/mnt/MicroSD
+
+## restart the autofs service
+sudo /etc/init.d/autofs restart.
+
+## set rpcbind and nfs-common to start on boot
+sudo update-rc.d rpcbind enable && sudo update-rc.d nfs-common enable
+
+## reboot PIs
+## after reboot you should be able to 
+cd /mnt/nfs/vine  ## and see your SD card.
