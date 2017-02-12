@@ -1,0 +1,10 @@
+---
+- hosts: all
+  remote_user: pi
+  tasks:
+    - name: install package
+      apt:
+        name: git
+        state: present
+      sudo: true
+
