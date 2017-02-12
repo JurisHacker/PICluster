@@ -13,29 +13,30 @@
 ## I also use 1' USB cables to manage cables
 ## This give a compact, portable cluster
 
-## First download all the things
+## First download all the (clusterhat) things
 ## For simplicity grab the controller and PI zero isos from https://clusterhat.com/setup-software
 ## The rest of the PI3s run a standard raspian build
 
 ## make the appropirate raspbian disk images for each PI
 ## on mac (from terminal) do:
 diskutil list
-diskutil unmount /dev/disk2s1  ## the disk ID of my SD card
+sudo diskutil unmount /dev/disk2s1  ## the disk ID of my SD card
 sudo dd bs=1m if=2016-11-25-raspbian-jessie-lite.img of=/dev/disk2
+## wash, rinse, repeat
 
 ## I use a gl-inet GL-MT300A device as the router/DHCP server/WISP/NTP server.  
 ## It has an SD card slot that can be shared via NFS.  I loaded a 64GB.
-Vine ## (router name) 
-IP:	192.168.31.40  ## Get it: 3.14...
 
-PI1  IP: 	 192.168.31.41  ## Controller
-Pi2  IP:	 192.168.31.42
-PI3  IP: 	 192.168.31.43
-PI4  IP:	 192.168.31.44
-PZ1  IP:   192.168.31.141
-PZ2  IP:   192.168.31.142
-PZ3  IP:   192.168.31.143
-PZ1  IP:   192.168.31.141
+I also added static addresses for all the PIs in the gl-inet.  It still does DHCP for any other devices
+Vine        IP:	192.168.31.40  ## (router name)  Get it: 3.14...
+Controller  IP: 	 192.168.31.41  ## The PI with the clusterhat installed
+Pi2         IP:	 192.168.31.42
+PI3         IP: 	 192.168.31.43
+PI4         IP:	 192.168.31.44
+PZ1         IP:   192.168.31.141
+PZ2         IP:   192.168.31.142
+PZ3         IP:   192.168.31.143
+PZ1         IP:   192.168.31.141
 
 ## On each PI do
 raspi-config        ## to expand the filesystem to the full SD card
@@ -44,19 +45,18 @@ useradd             ## Create some new user
 usermod -aG sudo newuser  ##Add your new user to the sudo group
 
 ## Edit /etc/hostname on each PI to name it
-/etc/hostname
+sudo vi /etc/hostname
 
-## Edit /etc/hosts adding each PIs IP addresses (eventually I'll move this to DNS on the router or PI-hole)
-/etc/hosts
-
+## Edit /etc/hosts adding each PIs IP addresses 
+## sudo vi /etc/hosts
 192.168.31.40	vine	vine.local	vine.net  ## router name
 192.168.31.41	PI1	PI1.local	PI1.net
 192.168.31.42	PI2	PI2.local	PI2.net
-192.168.31.43	PI3	PI3.local	PI3.net
-192.168.31.44	PI4	PI4.local	PI4.net
+### etc
+## or add the host to the GL-inet router
 
 ## The gl-inet router serves as an NTP server, edit /etc/ntp.conf on each PI to use the router
-/etc/ntp.conf
+sudo vi /etc/ntp.conf
 server 192.168.31.40
 
 ## generate SSH keys and copy to each system
@@ -72,9 +72,7 @@ ssh-copy-id user@hostname.example.com
 ## edit /etc/exports to include each PI (SD card named MicroSD)
 /mnt/MicroSD PI1(rw,sync)
 /mnt/MicroSD PI2(rw,sync)
-/mnt/MicroSD P3(rw,sync)
-/mnt/MicroSD PI4(rw,sync)
-
+### etc
 sudo reboot
 
 ## Setup NFS on PIs
@@ -100,3 +98,19 @@ sudo update-rc.d rpcbind enable && sudo update-rc.d nfs-common enable
 cd /mnt/nfs/vine  ## and see your SD card.
 
 ## Next (probably should have done it earlier) I installed Ansible on the controller
+## I have an basic /etc/ansible/hosts file that looks like this
+[PIS]
+PI2
+PI3
+PI4
+
+[PIZ]
+PZ1
+PZ2
+PZ3
+PZ4
+
+## A couple quick ansible playbooks included in repository to add packages, shutdown the whole cluster, etc
+
+
+
