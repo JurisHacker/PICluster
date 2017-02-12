@@ -110,10 +110,18 @@ PZ2
 PZ3
 PZ4
 
+## I'll add additional groups later (once I figure out what this thing is for)
+
 ## A couple quick ansible playbooks included in repository to add packages, shutdown the whole cluster, etc
 
 ## Use ansible to do a 'apt-get update && apt-get upgrade'
+## Add any packages you want using
+ansible-playbook add_package.yml ## specifying package in the yml
 
+## Setup a method to manage dotfiles across all the PIs
+## blatantly stolen from https://developer.atlassian.com/blog/2016/02/best-way-to-store-dotfiles-git-bare-repo/
+## Intall git using
+ansible-playbook add_package.yml ## specifying git in the yml
 
 
 
