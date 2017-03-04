@@ -134,3 +134,20 @@ ansible-playbook add_package.yml ## specifying git in the yml
 ## So I decided to setup the Pi Zeros as a "cluster".  Yes, I know they are underpowered and will likely be stupidly slow.
 ## This whole thing stack could be outmatched by a cheapo refurb computer.  That's not the point of this frankenstack.
 ## I opted to go with MPICH on the PI zeros.
+
+## Lots of this is based on: https://www.youtube.com/watch?v=vflPGqcXJkY
+## Install packages (I did the first PI zero individually to help me refine the process, the other three through ansible)
+sudo apt-get install mpich
+sudo apt-get install python-dev
+
+## Install mpi4py
+mkdir mpi4py
+cd mpi4py
+wget https://bitbucket.org/mpi4py/mpi4py/downloads/mpi4py-2.0.0.tar.gz
+tar -zxf mpi4py-2.0.0.tar.gz
+cd mpi4py-2.0.0
+sudo python setup.py build
+sudo python setup.py install 
+
+## Export python path
+export PYTHONPATH=/home/pi/mpi4py
