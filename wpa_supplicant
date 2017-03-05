@@ -1,3 +1,5 @@
+## From http://weworkweplay.com/play/automatically-connect-a-raspberry-pi-to-a-wifi-network/
+
 network={
 ssid="YOUR_NETWORK_NAME"
 psk="YOUR_NETWORK_PASSWORD"
