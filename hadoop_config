@@ -1,0 +1,55 @@
+cd
+mkdir hadoop
+mkdir hadoop/tmp
+mkdir hadoop/tmp/hdfs
+mkdir hadoop/tmp/hdfs/data
+mkdir hadoop/tmp/hdfs/name
+cd hadoop
+cp /mnt/nfs/vine/hadoop-2.7.3.tar.gz .
+tar xvfz hadoop-2.7.3.tar.gz
+
+## Path to openjdk
+/usr/lib/jvm/java-1.8.0-openjdk-armhf
+
+## edit ~/.profile
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-armhf
+export HADOOP_INSTALL=/home/pi/hadoop/hadoop-2.7.3
+export PATH=$PATH:$HADOOP_INSTALL/bin
+
+
+## edit ~/hadoop/hadoop-2.7.3/etc/hadoop/core-site.xml
+
+<property>
+	<name>hadoop.tmp.dir</name>
+	<value>/home/pi/hadoop/tmp</value>
+	<description>Termorary directories root.</description>
+</property>
+
+<property>
+	<name>fs.default.name</name>
+	<value>hdfs://192.168.31.141:54310</value>
+	<description>The default file system name.  Contains the Master Raspberry Pi’s IP and port number. </description>
+</property>
+
+## edit ~/hadoop/hadoop-2.7.3/etc/hadoop/mapred-site.xml
+
+<property>
+	<name>mapped.job.tracker</name>
+	<value>192.168.31.141:54311</value>
+	<description>The Master Raspberry Pi’s IP and port that the MapReduce job tracker runs on.</description>
+</property>
+
+## edit ~/hadoop/hadoop-2.7.3/etc/hadoop/hdfs-site.xml
+<property>
+	<name>dfs.data.dir</name>
+	<value>/home/pi/hadoop/hdfs/data/</value>
+</property>
+<property>
+	<name>bfs.name.dir</name>
+	<value>/home/pi/hadoop/hdfs/name/ </value>
+</property>
+
+## edit hadoop-env.sh
+export JAVA-HOME=/usr/lib/jvm/java-1.8.0-openjdk-armhf
+
+./home/pi/hadoop/hadoop-2.7.3/bin/hadoop namenode -format
