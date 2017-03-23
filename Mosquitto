@@ -1,0 +1,7 @@
+## Building mqtt (mosquitto) onto the cluster
+## The plan is to get each of the cluster nodes to report environmental information to a broker
+## then the broker will report to a subscriber (client).
+## I'd like to get the subscriber to then update a Pimoroni Unicorn pHat
+## The pHat will then use its LEDs to display the environment
+
+## First install Mosquitto client on each of the cluster nodes
